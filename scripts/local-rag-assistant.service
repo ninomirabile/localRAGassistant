@@ -1,0 +1,24 @@
+[Unit]
+Description=Local RAG Assistant
+After=network.target
+
+[Service]
+Type=exec
+User=rag-user
+Group=rag-user
+WorkingDirectory=/opt/local-rag-assistant
+Environment=PATH=/opt/local-rag-assistant/venv/bin
+ExecStart=/opt/local-rag-assistant/venv/bin/gunicorn -c gunicorn.conf.py src.main:app
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=3
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/local-rag-assistant/data /opt/local-rag-assistant/index /opt/local-rag-assistant/cache /opt/local-rag-assistant/logs
+
+[Install]
+WantedBy=multi-user.target 

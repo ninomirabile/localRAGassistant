@@ -245,3 +245,6 @@ class DocumentService:
     def get_documents_count(self) -> int:
         """Get the number of documents currently in memory."""
         return len(self._documents)
+
+
+# Test comment for CI

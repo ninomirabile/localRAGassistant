@@ -21,21 +21,23 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting Local RAG Assistant...")
     setup_logging()
-    
+
     # Ensure directories exist
     from src.core.config import ensure_directories
+
     ensure_directories()
-    
+
     logger.info("Local RAG Assistant started successfully")
-    
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down Local RAG Assistant...")
-    
+
     # STATELESS: pulisco i file temporanei alla chiusura
     try:
         from src.api.dependencies import get_document_service
+
         document_service = await get_document_service()
         document_service.cleanup_temp_files()
         logger.info("Temporary files cleaned up on shutdown")
@@ -86,11 +88,11 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     uvicorn.run(
         "src.main:app",
         host=settings.server.host,
         port=settings.server.port,
         reload=settings.app.debug,
-        log_level="debug" if settings.app.debug else "info"
-    ) 
+        log_level="debug" if settings.app.debug else "info",
+    )

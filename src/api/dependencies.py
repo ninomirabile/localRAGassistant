@@ -9,10 +9,12 @@ from src.services.rag_service import RAGService, rag_service_singleton
 
 document_service_singleton = DocumentService(rag_service_singleton)
 
+
 async def get_rag_service() -> RAGService:
     """Get singleton RAG service instance."""
     await rag_service_singleton.initialize()
     return rag_service_singleton
+
 
 async def get_document_service() -> DocumentService:
     """Get singleton Document service instance."""
@@ -21,4 +23,4 @@ async def get_document_service() -> DocumentService:
 
 # Type aliases for dependency injection
 RAGServiceDep = Depends(get_rag_service)
-DocumentServiceDep = Depends(get_document_service) 
+DocumentServiceDep = Depends(get_document_service)

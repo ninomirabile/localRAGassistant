@@ -1,0 +1,39 @@
+# Lightweight configuration for dual-core systems
+app:
+  host: "127.0.0.1"
+  port: 8000
+  workers: 1  # Single worker for dual-core
+  max_connections: 10
+
+rag:
+  embedding_model: "all-MiniLM-L6-v2"  # Lighter model
+  chunk_size: 256  # Smaller chunks
+  chunk_overlap: 50
+  similarity_threshold: 0.6
+  max_results: 5  # Limit results
+
+cache:
+  redis:
+    host: "127.0.0.1"
+    port: 6379
+    db: 0
+    max_memory: "512mb"  # Limit Redis memory
+    max_memory_policy: "allkeys-lru"
+
+processing:
+  max_file_size: 25  # MB - reduced from 50MB
+  max_concurrent_uploads: 2
+  temp_dir: "./temp"
+
+logging:
+  level: "INFO"
+  format: "json"
+  file: "./logs/app.log"
+  max_size: "10MB"
+  backup_count: 3
+
+performance:
+  enable_caching: true
+  cache_ttl: 3600  # 1 hour
+  lazy_loading: true
+  batch_size: 4  # Smaller batches 

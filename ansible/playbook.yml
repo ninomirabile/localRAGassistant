@@ -1,0 +1,134 @@
+---
+- name: Deploy Local RAG Assistant
+  hosts: rag_servers
+  become: yes
+  vars:
+    app_user: rag-user
+    app_dir: /opt/local-rag-assistant
+    app_port: 8000
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - nginx
+          - git
+          - curl
+          - build-essential
+        state: present
+
+    - name: Create application user
+      user:
+        name: "{{ app_user }}"
+        system: yes
+        shell: /bin/bash
+        home: "/home/{{ app_user }}"
+        createhome: yes
+
+    - name: Create application directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Clone application repository
+      git:
+        repo: "{{ repository_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ app_version }}"
+      become_user: "{{ app_user }}"
+
+    - name: Create virtual environment
+      command: python3 -m venv venv
+      args:
+        chdir: "{{ app_dir }}"
+      become_user: "{{ app_user }}"
+
+    - name: Install Python dependencies
+      pip:
+        requirements: "{{ app_dir }}/requirements/base.txt"
+        virtualenv: "{{ app_dir }}/venv"
+        virtualenv_command: python3 -m venv
+      become_user: "{{ app_user }}"
+
+    - name: Create necessary directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+      loop:
+        - "{{ app_dir }}/data"
+        - "{{ app_dir }}/index"
+        - "{{ app_dir }}/cache"
+        - "{{ app_dir }}/logs"
+
+    - name: Copy systemd service file
+      template:
+        src: local-rag-assistant.service.j2
+        dest: /etc/systemd/system/local-rag-assistant.service
+        mode: '0644'
+
+    - name: Copy nginx configuration
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/local-rag-assistant
+        mode: '0644'
+
+    - name: Enable nginx site
+      file:
+        src: /etc/nginx/sites-available/local-rag-assistant
+        dest: /etc/nginx/sites-enabled/local-rag-assistant
+        state: link
+
+    - name: Remove default nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Test nginx configuration
+      command: nginx -t
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start application service
+      systemd:
+        name: local-rag-assistant
+        state: started
+        enabled: yes
+
+    - name: Restart nginx
+      systemd:
+        name: nginx
+        state: restarted
+
+    - name: Wait for application to start
+      uri:
+        url: "http://localhost:{{ app_port }}/api/v1/health"
+        status_code: 200
+      retries: 10
+      delay: 5
+
+  handlers:
+    - name: restart application
+      systemd:
+        name: local-rag-assistant
+        state: restarted
+
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded 

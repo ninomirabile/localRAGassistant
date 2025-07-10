@@ -1,0 +1,100 @@
+/* Custom styles for Local RAG Assistant */
+
+/* Loading spinner */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Dark mode styles */
+.dark {
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.dark .bg-white {
+    background-color: #2d2d2d;
+}
+
+.dark .text-gray-900 {
+    color: #ffffff;
+}
+
+.dark .text-gray-700 {
+    color: #d1d5db;
+}
+
+.dark .border-gray-300 {
+    border-color: #4b5563;
+}
+
+.dark .bg-gray-50 {
+    background-color: #1a1a1a;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .grid-cols-1.lg\\:grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .lg\\:col-span-2 {
+        grid-column: 1;
+    }
+}
+
+/* Animation for upload progress */
+.upload-progress {
+    transition: width 0.3s ease-in-out;
+}
+
+/* Highlight for search results */
+.highlight {
+    background-color: #fef3c7;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+/* Custom button styles */
+.btn-primary {
+    @apply bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.btn-secondary {
+    @apply bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500;
+}
+
+.btn-success {
+    @apply bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500;
+}
+
+.btn-danger {
+    @apply bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500;
+} 

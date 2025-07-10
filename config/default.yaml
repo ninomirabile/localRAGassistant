@@ -1,0 +1,33 @@
+app:
+  name: "Local RAG Assistant"
+  version: "1.0.0"
+  debug: false
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1
+
+rag:
+  embedding_model: "all-MiniLM-L6-v2"
+  chunk_size: 512
+  chunk_overlap: 50
+  similarity_threshold: 0.7
+  top_k: 5
+
+llm:
+  provider: "ollama"  # "ollama", "none"
+  model: "llama2:7b"
+  temperature: 0.1
+  max_tokens: 1000
+
+storage:
+  data_dir: "data"
+  index_dir: "index"
+  cache_dir: "cache"
+  max_file_size: 50MB
+
+security:
+  max_upload_size: 50MB
+  allowed_extensions: [".pdf"]
+  rate_limit: 100/minute 

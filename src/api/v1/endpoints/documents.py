@@ -44,9 +44,7 @@ async def upload_document(
             tag_list = [tag.strip() for tag in tags.split(",") if tag.strip()]
 
         # Create metadata
-        metadata = DocumentCreate(
-            filename=file.filename, title=title, description=description, tags=tag_list
-        )
+        metadata = DocumentCreate(filename=file.filename, title=title, description=description, tags=tag_list)
 
         # Upload document
         document = await document_service.upload_document(file, metadata)
@@ -90,9 +88,7 @@ async def list_documents(
 ) -> Response:
     """List all documents."""
     try:
-        doc_list = await document_service.get_documents(
-            skip=skip, limit=limit, search=search
-        )
+        doc_list = await document_service.get_documents(skip=skip, limit=limit, search=search)
         # Se la richiesta è HTMX, restituisco HTML user-friendly
         if request and request.headers.get("HX-Request") == "true":
             if not doc_list.documents:
@@ -121,27 +117,19 @@ async def get_document(
     """Get a specific document."""
     document = await document_service.get_document(document_id)
     if not document:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
     return document
 
 
 @router.get("/{document_id}/download")
-async def download_document(
-    document_id: UUID, document_service: DocumentService = Depends(get_document_service)
-):
+async def download_document(document_id: UUID, document_service: DocumentService = Depends(get_document_service)):
     """Download a document file."""
     document = await document_service.get_document(document_id)
     if not document:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
 
     file_path = document.file_path
-    return FileResponse(
-        path=file_path, filename=document.filename, media_type=document.mime_type
-    )
+    return FileResponse(path=file_path, filename=document.filename, media_type=document.mime_type)
 
 
 @router.put("/{document_id}", response_model=Document)
@@ -153,24 +141,18 @@ async def update_document(
     """Update document metadata."""
     document = await document_service.update_document(document_id, update)
     if not document:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
 
     logger.info(f"Document updated: {document.filename}")
     return document
 
 
 @router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_document(
-    document_id: UUID, document_service: DocumentService = Depends(get_document_service)
-):
+async def delete_document(document_id: UUID, document_service: DocumentService = Depends(get_document_service)):
     """Delete a document."""
     success = await document_service.delete_document(document_id)
     if not success:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
 
     logger.info(f"Document deleted: {document_id}")
 

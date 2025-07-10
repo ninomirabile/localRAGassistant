@@ -24,9 +24,7 @@ async def query_documents(
     """Query documents using RAG."""
     try:
         logger.info(f"Processing query: {query[:100]}...")
-        req = QueryRequest(
-            query=query, top_k=top_k, similarity_threshold=similarity_threshold
-        )
+        req = QueryRequest(query=query, top_k=top_k, similarity_threshold=similarity_threshold)
         response = await rag_service.query(req)
         logger.info(f"Query completed in {response.processing_time:.2f}s")
         # Se la richiesta è HTMX, restituisco solo l'answer

@@ -31,9 +31,7 @@ class DocumentService:
         self._documents: Dict[UUID, Document] = {}
         self._temp_files: Dict[UUID, Path] = {}
 
-    async def upload_document(
-        self, file: UploadFile, metadata: Optional[DocumentCreate] = None
-    ) -> Document:
+    async def upload_document(self, file: UploadFile, metadata: Optional[DocumentCreate] = None) -> Document:
         """Upload and process a document."""
         # Validate file
         if not self._validate_file(file):
@@ -113,9 +111,7 @@ class DocumentService:
         # STATELESS: restituisco solo i documenti caricati in questa sessione
         return self._documents.get(document_id)
 
-    async def get_documents(
-        self, skip: int = 0, limit: int = 10, search: Optional[str] = None
-    ) -> DocumentList:
+    async def get_documents(self, skip: int = 0, limit: int = 10, search: Optional[str] = None) -> DocumentList:
         """Get list of documents."""
         # STATELESS: restituisco solo i documenti caricati in questa sessione
         documents = list(self._documents.values())
@@ -134,13 +130,9 @@ class DocumentService:
         total = len(documents)
         documents = documents[skip : skip + limit]
 
-        return DocumentList(
-            documents=documents, total=total, page=skip // limit + 1, per_page=limit
-        )
+        return DocumentList(documents=documents, total=total, page=skip // limit + 1, per_page=limit)
 
-    async def update_document(
-        self, document_id: UUID, update: DocumentUpdate
-    ) -> Optional[Document]:
+    async def update_document(self, document_id: UUID, update: DocumentUpdate) -> Optional[Document]:
         """Update document metadata."""
         # STATELESS: aggiorno solo i documenti in memoria
         document = self._documents.get(document_id)
@@ -192,9 +184,7 @@ class DocumentService:
                 "total_documents": len(self._documents),
                 "total_size_bytes": total_size,
                 "total_size_mb": total_size / (1024 * 1024),
-                "average_size_mb": (total_size / len(self._documents)) / (1024 * 1024)
-                if self._documents
-                else 0,
+                "average_size_mb": (total_size / len(self._documents)) / (1024 * 1024) if self._documents else 0,
             }
 
         except Exception as e:

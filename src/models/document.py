@@ -38,12 +38,8 @@ class Document(DocumentBase):
     file_size: int = Field(..., description="File size in bytes")
     mime_type: str = Field(..., description="MIME type")
     pages: Optional[int] = Field(None, description="Number of pages")
-    created_at: datetime = Field(
-        default_factory=datetime.utcnow, description="Creation timestamp"
-    )
-    updated_at: datetime = Field(
-        default_factory=datetime.utcnow, description="Last update timestamp"
-    )
+    created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
+    updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last update timestamp")
     indexed: bool = Field(default=False, description="Whether document is indexed")
     chunk_count: Optional[int] = Field(None, description="Number of chunks")
 

@@ -129,9 +129,7 @@ class RAGService:
             return
         logger.info("Initializing RAG service...")
         # Initialize embedding model
-        self.embedding_model = SentenceTransformerEmbedding(
-            settings.rag.embedding_model
-        )
+        self.embedding_model = SentenceTransformerEmbedding(settings.rag.embedding_model)
         # NON caricare nessun indice da disco: stateless
         self.index = None
         self._initialized = True
@@ -165,15 +163,11 @@ class RAGService:
                 documents,
                 embed_model=self.embedding_model,
                 node_parser=node_parser,
-                storage_context=StorageContext.from_defaults(
-                    vector_store=SimpleVectorStore()
-                ),
+                storage_context=StorageContext.from_defaults(vector_store=SimpleVectorStore()),
                 llm=DummyLLM(),  # <--- Usa DummyLLM invece di None per evitare OpenAI
             )
             logger.info(f"[DEBUG] Indice ricreato: {self.index}")
-            logger.info(
-                f"[DEBUG] Numero documenti nell'indice: {len(self.index.docstore.docs) if self.index else 0}"
-            )
+            logger.info(f"[DEBUG] Numero documenti nell'indice: {len(self.index.docstore.docs) if self.index else 0}")
             # Save index
             await self._save_index()
             logger.info(f"Document {document.filename} added to index successfully")
@@ -237,10 +231,14 @@ class RAGService:
                     # Build response text from source documents
                     if i == 0:
                         response_text = f"Basandomi sui documenti caricati, ecco cosa ho trovato:\n\n"
-                    response_text += f"**Fonte {i+1} (pagina {node.metadata.get('page_label', 'N/A')}):**\n{node.text}\n\n"
+                    response_text += (
+                        f"**Fonte {i+1} (pagina {node.metadata.get('page_label', 'N/A')}):**\n{node.text}\n\n"
+                    )
 
             if not sources:
-                response_text = "Non ho trovato informazioni rilevanti nei documenti caricati per rispondere alla tua domanda."
+                response_text = (
+                    "Non ho trovato informazioni rilevanti nei documenti caricati per rispondere alla tua domanda."
+                )
 
             # Calculate confidence (simplified)
             confidence = min(1.0, len(sources) / request.top_k) if sources else 0.0
@@ -296,9 +294,7 @@ class RAGService:
         self.index = None
         self.embedding_model = None
         self._initialized = False
-        logger.info(
-            "[DEBUG] Stato RAGService azzerato: index, embedding_model, _initialized"
-        )
+        logger.info("[DEBUG] Stato RAGService azzerato: index, embedding_model, _initialized")
 
 
 # Singleton da usare per tutte le dipendenze

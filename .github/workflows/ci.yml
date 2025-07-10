@@ -55,7 +55,7 @@ jobs:
           pip install -r requirements/dev.txt
       - name: Run security checks
         run: |
-          bandit -r src/
+          bandit -c .bandit -r src/
           safety check
 
   build:
